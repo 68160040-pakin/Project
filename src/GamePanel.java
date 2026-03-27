@@ -148,11 +148,28 @@ public class GamePanel extends JPanel {
 
     private void finishTurn(Timer timer) {
         timer.stop();
-        if (players.get(currentPlayerIndex).getPosition() >= 100) {
-            JOptionPane.showMessageDialog(this, "Player " + (currentPlayerIndex + 1) + " Wins!");
+
+        Player winner = players.get(currentPlayerIndex);
+        if (winner.getPosition() >= 100) {
+            // 1. ดึงสีของผู้ชนะมาแปลงเป็นรหัสสี Hex เพื่อใช้ใน HTML
+            Color c = winner.getColor();
+            String hexColor = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
+
+            // 2. สร้างข้อความ HTML ปรับขนาดตัวอักษร (font-size) และสี (color)
+            String msg = "<html><div style='text-align: center; padding: 10px;'>"
+                    + "<h1 style='color: " + hexColor + "; font-size: 30px;'>🎉 WINNER! 🎉</h1>"
+                    + "<h2 style='font-size: 20px;'>Congratulations! Player " + (currentPlayerIndex + 1) + "</h2>"
+                    + "<p style='font-size: 14px; color: #555;'>You reached the goal!</p>"
+                    + "</div></html>";
+
+            // 3. แสดงหน้าต่างแจ้งเตือน
+            JOptionPane.showMessageDialog(this, msg, "Game Over", JOptionPane.PLAIN_MESSAGE);
+
             rollDiceBtn.setEnabled(false);
             return;
         }
+
+        // สลับเทิร์นปกติ
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
         statusLabel.setText("Player " + (currentPlayerIndex + 1) + "'s turn");
         statusLabel.setForeground(players.get(currentPlayerIndex).getColor());
